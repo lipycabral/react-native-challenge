@@ -15,7 +15,7 @@ export default class AddCities extends Component {
                 <TextInput style={styles.txtInput} placeholder='Cidade' />
                 <TextInput style={styles.txtInput} placeholder='País' />
                 <TouchableHighlight style={styles.btnSubmit}>
-                    <Text>
+                    <Text style={styles.txtBtn}>
                         Salvar
                     </Text>
                 </TouchableHighlight>
@@ -40,8 +40,12 @@ const styles = StyleSheet.create({
         height: 50,
         width: '90%',
         marginVertical: 10,
-        backgroundColor: '#FFFFFF'
+        backgroundColor: '#FFF'
     },
+    txtBtn:{
+        color: '#FFF'
+    },
+
     btnSubmit: {
         height: 50,
         width: '90%',

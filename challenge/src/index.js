@@ -2,13 +2,16 @@ import React from 'react'
 
 import Cities from './city/cities'
 import AddCities from './city/addCities'
+import City from './city'
+import AddLocations from './location/addLocations'
 
-import { createAppContainer, createBottomTabNavigator, createStackNavigator } from 'react-navigation';
+import { createAppContainer, createBottomTabNavigator, createStackNavigator, getActiveChildNavigationOptions } from 'react-navigation';
 
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 
-const CitiesStack = createStackNavigator({
+const CitiesStack = createStackNavigator(
+{
     cities: {
         screen: Cities,
         navigationOptions: () => ({
@@ -16,11 +19,44 @@ const CitiesStack = createStackNavigator({
             headerStyle: {
                 backgroundColor: '#9400D3',
             },
+            headerTitleStyle:{
+                color: '#FFF'
+            }
         }),
+        params: {
+            showTabBar: true
+        }
 
+    },
+    city: {
+        screen: City,
+        navigationOptions: (navigation) => ({
+            headerStyle: {
+                backgroundColor: '#9400D3',
+            },
+            headerTintColor: 'white',
+        }),
+        params: {
+            showTabBar: true
+        }
+    },
+    addLocations: {
+        screen: AddLocations,
+        navigationOptions: {
+            header: null
+        },
+        params: {
+            showTabBar: false
+        }
     }
-})
-
+}
+)
+CitiesStack.navigationOptions = ({ navigation }) => {
+    let tabBarVisible = navigation.state.routes[navigation.state.index].params.showTabBar; 
+    return {
+      tabBarVisible,
+    };
+};
 const Routes = createAppContainer(
     createBottomTabNavigator({
         cities: {
@@ -29,7 +65,7 @@ const Routes = createAppContainer(
                 tabBarLabel: 'Cidades',
                 tabBarIcon: ({ focused }) => (
                     <FontAwesome5 name='city' color={focused ? '#0000FF' : '#808080'} size={24} />
-                ),
+                )
             })
         },
         addCities: {
@@ -41,7 +77,12 @@ const Routes = createAppContainer(
                 )
             })
         }
-    })
+    }, {
+            navigationOptions: ({ navigation, screenProps }) => ({
+                ...getActiveChildNavigationOptions(navigation, screenProps),
+            })
+        }
+    )
 )
 
 export default Routes
