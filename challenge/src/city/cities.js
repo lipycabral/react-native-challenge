@@ -6,30 +6,27 @@ import {
     ScrollView,
     TouchableHighlight
 } from 'react-native'
+
+import { connect } from 'react-redux'
+
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
-export default class Cities extends Component {
+class Cities extends Component {
     constructor(props) {
         super(props)
-        this.state = {
-            cities: [
-                { id: 1, nameCity: 'Austin', nameCountry: 'Estados Unidos' },
-                { id: 2, nameCity: 'Rio De Janeiro', nameCountry: 'Brasil' },
-            ]
-        }
     }
     render() {
         return (
             <ScrollView style={styles.container}>
-                {this.state.cities.map((city) => (
+                {this.props.cities.map((city) => (
                     <TouchableHighlight 
                         key={city.id}
                         onPress={() => {
-                            this.props.navigation.push('city', {nameCity: city.nameCity})
+                            this.props.navigation.push('city', {nameCity: city.name, idCity: city.id})
                         }}
                     >
                         <View style={styles.viewCities}>
-                            <Text style={styles.txtNameCity}>{city.nameCity}</Text>
+                            <Text style={styles.txtNameCity}>{city.name}</Text>
                             <AntDesign name='right' size={24} />
                         </View>
                     </TouchableHighlight>
@@ -56,3 +53,9 @@ const styles = StyleSheet.create({
         fontSize: 20
     }
 })
+
+const mapStateToProps = state => ({
+    cities: state.RegisterReducer.cities
+})
+
+export default connect(mapStateToProps, null)(Cities)

@@ -1,20 +1,60 @@
 import React, { Component } from 'react'
-import { 
+import {
     Text,
     View,
     StyleSheet,
     TextInput,
-    TouchableHighlight
+    TouchableHighlight,
+    Keyboard
 } from 'react-native'
 
-export default class AddCities extends Component {
+import { connect } from 'react-redux'
+
+import {
+    changeNameCity,
+    changeCountry,
+    registerCity
+} from '../actions/registerActions'
+
+class AddCities extends Component {
+    constructor(props) {
+        super(props)
+    }
+
+    _registerCity() {
+        const { city, country } = this.props
+
+        this.props.registerCity({ city, country })
+    }
     render() {
         return (
             <View style={styles.container}>
                 <Text style={styles.txtMain}>Cidades</Text>
-                <TextInput style={styles.txtInput} placeholder='Cidade' />
-                <TextInput style={styles.txtInput} placeholder='País' />
-                <TouchableHighlight style={styles.btnSubmit}>
+                    <TextInput
+                        style={styles.txtInput}
+                        placeholder='Cidade'
+                        value={this.props.city}
+                        onChangeText={
+                            text => this.props.changeNameCity(text)
+                        }
+                    />
+                    <TextInput
+                        style={styles.txtInput}
+                        placeholder='País'
+                        value={this.props.country}
+                        onChangeText={
+                            text => this.props.changeCountry(text)
+                        }
+                    />
+                <TouchableHighlight
+                    style={styles.btnSubmit}
+                    onPress={
+                        () => {
+                            this._registerCity()
+                            Keyboard.dismiss()
+                        }
+                    }
+                >
                     <Text style={styles.txtBtn}>
                         Salvar
                     </Text>
@@ -31,18 +71,18 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    txtMain:{
+    txtMain: {
         fontSize: 30,
         color: '#FFF',
         marginVertical: 10,
     },
-    txtInput:{
+    txtInput: {
         height: 50,
         width: '90%',
         marginVertical: 10,
         backgroundColor: '#FFF'
     },
-    txtBtn:{
+    txtBtn: {
         color: '#FFF'
     },
 
@@ -55,3 +95,17 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     }
 })
+
+const mapStateToProps = state => ({
+    city: state.RegisterReducer.nameCity,
+    country: state.RegisterReducer.countryCity,
+})
+
+export default connect(
+    mapStateToProps,
+    {
+        changeNameCity,
+        changeCountry,
+        registerCity
+    }
+)(AddCities)

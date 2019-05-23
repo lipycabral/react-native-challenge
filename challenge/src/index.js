@@ -4,57 +4,77 @@ import Cities from './city/cities'
 import AddCities from './city/addCities'
 import City from './city'
 import AddLocations from './location/addLocations'
+import Location from './location'
 
 import { createAppContainer, createBottomTabNavigator, createStackNavigator, getActiveChildNavigationOptions } from 'react-navigation';
 
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 
-const CitiesStack = createStackNavigator(
-{
-    cities: {
-        screen: Cities,
-        navigationOptions: () => ({
-            title: 'Cidades',
-            headerStyle: {
-                backgroundColor: '#9400D3',
-            },
-            headerTitleStyle:{
-                color: '#FFF'
-            }
-        }),
-        params: {
-            showTabBar: true
-        }
+import { Provider } from 'react-redux'
+import { createStore, applyMiddleware } from 'redux'
+import ReduxThunk from 'redux-thunk'
 
-    },
-    city: {
-        screen: City,
-        navigationOptions: (navigation) => ({
-            headerStyle: {
-                backgroundColor: '#9400D3',
-            },
-            headerTintColor: 'white',
-        }),
-        params: {
-            showTabBar: true
-        }
-    },
-    addLocations: {
-        screen: AddLocations,
-        navigationOptions: {
-            header: null
+import reducers from './reducers'
+
+const CitiesStack = createStackNavigator(
+    {
+        cities: {
+            screen: Cities,
+            navigationOptions: () => ({
+                title: 'Cidades',
+                headerStyle: {
+                    backgroundColor: '#9400D3',
+                },
+                headerTitleStyle: {
+                    color: '#FFF'
+                }
+            }),
+            params: {
+                showTabBar: true
+            }
+
         },
-        params: {
-            showTabBar: false
+        city: {
+            screen: City,
+            navigationOptions: (navigation) => ({
+                headerStyle: {
+                    backgroundColor: '#9400D3',
+                },
+                headerTintColor: 'white',
+            }),
+            params: {
+                showTabBar: true
+            }
+        },
+        addLocations: {
+            screen: AddLocations,
+            navigationOptions: {
+                header: null
+            },
+            params: {
+                showTabBar: false
+            }
+        },
+        location: {
+            screen: Location,
+            params: {
+                showTabBar: true
+            },
+            navigationOptions: {
+                headerStyle: {
+                    backgroundColor: '#9400D3',
+                },
+                headerTintColor: '#FFF'
+            }
+
         }
     }
-}
 )
 CitiesStack.navigationOptions = ({ navigation }) => {
-    let tabBarVisible = navigation.state.routes[navigation.state.index].params.showTabBar; 
+    let tabBarVisible = navigation.state.routes[navigation.state.index].params.showTabBar;
     return {
-      tabBarVisible,
+        tabBarVisible,
     };
 };
 const Routes = createAppContainer(
@@ -85,4 +105,8 @@ const Routes = createAppContainer(
     )
 )
 
-export default Routes
+export default props => (
+    <Provider store={createStore(reducers, {}, applyMiddleware(ReduxThunk))}>
+        <Routes />
+    </Provider>
+)

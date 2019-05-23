@@ -9,7 +9,12 @@ import {
 
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
-export default class City extends Component {
+import { connect } from 'react-redux'
+import {
+    changeLocation
+} from '../actions/registerActions'
+
+class City extends Component {
     constructor(props) {
         super(props)
     }
@@ -20,25 +25,41 @@ export default class City extends Component {
         return (
             <View style={styles.container}>
                 <ScrollView>
-                    <View style={styles.viewBox}>
-                        <View style={styles.viewBoxHeader}>
-                            <Text style={styles.txtBoxHeader}>Teste</Text>
-                        </View>
-                        <View style={styles.viewBoxBody}>
-                            <Text style={styles.txtBoxBody}>Tipo: Casa</Text>
-                            <Text style={styles.txtBoxBody}>Endereço: Rua Jambo</Text>
-                        </View>
-                    </View>
-
+                    {
+                        this.props.locations.map(location => {
+                            if (location.cityId === this.props.navigation.getParam('idCity')) {
+                                return (
+                                    <TouchableHighlight
+                                        key={location.id}
+                                        onPress={() => {
+                                            this.props.navigation.push('location', {name:location.name})
+                                            const {id, cityId, name, type, address, coordinates, notes} = location
+                                            this.props.changeLocation({id, cityId, name, type, address, coordinates, notes})
+                                        }}
+                                    >
+                                        <View style={styles.viewBox}>
+                                            <View style={styles.viewBoxHeader}>
+                                                <Text style={styles.txtBoxHeader}>{location.name}</Text>
+                                            </View>
+                                            <View style={styles.viewBoxBody}>
+                                                <Text style={styles.txtBoxBody}>Tipo: {location.type}</Text>
+                                                <Text style={styles.txtBoxBody}>Endereço: {location.address}</Text>
+                                            </View>
+                                        </View>
+                                    </TouchableHighlight>
+                                )
+                            }
+                        })
+                    }
 
                 </ScrollView>
-                <TouchableHighlight 
+                <TouchableHighlight
                     style={styles.btnPlus}
-                    onPress={()=> {
-                        this.props.navigation.push('addLocations', {nameCity: this.props.navigation.getParam('nameCity')})
+                    onPress={() => {
+                        this.props.navigation.push('addLocations', { nameCity: this.props.navigation.getParam('nameCity'), idCity: this.props.navigation.getParam('idCity') })
                     }}
                 >
-                        <AntDesign name='plus' size={24} color='white' />
+                    <AntDesign name='plus' size={24} color='white' />
                 </TouchableHighlight>
             </View>
         )
@@ -94,3 +115,9 @@ const styles = StyleSheet.create({
         marginVertical: 3
     }
 })
+
+const mapStateToProps = state => ({
+    locations: state.RegisterReducer.locations
+})
+
+export default connect(mapStateToProps, { changeLocation })(City)
